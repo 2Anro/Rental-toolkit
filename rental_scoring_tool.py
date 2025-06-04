@@ -61,9 +61,11 @@ if st.button("Evaluate"):
     st.text(f"Score: {score}")
 # Your Evaluate button logic here...
 # Then add this at the end:
-st.markdown("---")
 if st.button("Reset"):
-    st.session_state.clear()
+    for key in ["income_input", "rent_input", "debt_input"]:
+        st.session_state[key] = 0
+    st.experimental_rerun()
+
 
 
 
