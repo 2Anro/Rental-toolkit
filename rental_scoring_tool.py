@@ -64,7 +64,6 @@ if st.button("Evaluate"):
 if st.button("Reset"):
     for key in ["income_input", "rent_input", "debt_input"]:
         st.session_state[key] = 0
-    st.experimental_rerun()
 
 
 
