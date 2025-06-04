@@ -51,7 +51,7 @@ if st.button("Reset"):
     ]:
         if key in st.session_state:
             del st.session_state[key]
-    st.experimental_rerun()
+    
    
 
 
