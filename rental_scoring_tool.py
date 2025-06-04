@@ -64,7 +64,6 @@ if st.button("Evaluate"):
 st.markdown("---")
 if st.button("Reset"):
     st.session_state.clear()
-    st.experimental_rerun()
 
 
 
