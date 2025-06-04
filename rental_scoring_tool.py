@@ -59,6 +59,8 @@ if st.button("Evaluate"):
     st.markdown("---")
     st.markdown(f"<h3 style='color:{color}'>{verdict}</h3>", unsafe_allow_html=True)
     st.text(f"Score: {score}")
+if st.button("Reset"):
+    st.experimental_rerun()
 
 
 
