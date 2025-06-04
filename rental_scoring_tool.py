@@ -1,3 +1,7 @@
+import streamlit as st
+
+st.title("Rental Application Evaluator")
+st.write("Welcome to the rental application evaluator tool.")
 
 def evaluate_applicant(applicant):
     income = applicant['income']
