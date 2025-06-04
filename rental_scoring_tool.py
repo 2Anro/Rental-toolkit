@@ -3,67 +3,67 @@ import streamlit as st
 st.title("Rental Application Evaluator")
 st.write("Welcome to the rental application evaluator tool.")
 
-def evaluate_applicant(applicant):
-    income = applicant['income']
-    debt = applicant['debt']
-    rent = applicant['rent']
-    tpn = applicant['tpn']
-    deposit_ready = applicant['deposit_ready']
-    rental_history = applicant['rental_history']
-    red_flags = applicant['red_flags']
+import streamlit as st
 
-    net_income = income - debt
-    rent_to_income = rent / net_income if net_income else 1  # avoid division by zero
-    debt_to_income = debt / income if income else 1
+st.set_page_config(page_title="Rental Application Evaluator", layout="centered")
 
-    # Scoring system
-    score = 0
-    if rent_to_income <= 0.33:
-        score += 5
-    if debt_to_income <= 0.4:
-        score += 3
-    if tpn.lower() == "good":
-        score += 3
-    if deposit_ready.lower() == "yes":
-        score += 2
-    if rental_history.lower() == "good":
-        score += 2
-    if red_flags.lower() == "no":
-        score += 2
+st.title("🏠 Rental Application Evaluator")
 
-    # Decision logic
-    if score >= 15:
-        decision = "Accept"
-        risk = "Green"
-    elif score >= 10:
-        decision = "Review"
-        risk = "Orange"
+st.markdown("Enter applicant details below to determine rental suitability.")
+
+with st.form("applicant_form"):
+    name = st.text_input("Applicant Name")
+    income = st.number_input("Monthly Income (R)", min_value=0)
+    debt = st.number_input("Monthly Debt Obligations (R)", min_value=0)
+    rent = st.number_input("Requested Rent Amount (R)", min_value=0)
+    tpn_score = st.selectbox("TPN Status", ["Excellent", "Good", "Average", "Poor", "Unknown"])
+    deposit_ready = st.radio("Deposit Ready?", ["Yes", "No"])
+    rental_history = st.selectbox("Rental History", ["Clean", "Issues", "None"])
+    red_flags = st.text_area("Red Flags (Optional)", "")
+
+    submitted = st.form_submit_button("Evaluate")
+
+if submitted:
+    affordability_ratio = (rent + debt) / income if income > 0 else 1
+    score = 100
+
+    # Score adjustments
+    if affordability_ratio > 0.6:
+        score -= 30
+    elif affordability_ratio > 0.45:
+        score -= 15
+
+    if tpn_score == "Good":
+        score += 10
+    elif tpn_score == "Average":
+        score -= 10
+    elif tpn_score == "Poor":
+        score -= 30
+
+    if deposit_ready == "No":
+        score -= 10
+
+    if rental_history == "Issues":
+        score -= 15
+    elif rental_history == "None":
+        score -= 5
+
+    if "eviction" in red_flags.lower():
+        score -= 50
+
+    # Result
+    if score >= 80:
+        verdict = "✅ Approved"
+        color = "green"
+    elif 60 <= score < 80:
+        verdict = "🟡 Borderline"
+        color = "orange"
     else:
-        decision = "Decline"
-        risk = "Red"
+        verdict = "❌ Declined"
+        color = "red"
 
-    return {
-        "Net Income": net_income,
-        "Rent-to-Income Ratio": round(rent_to_income, 2),
-        "Debt-to-Income Ratio": round(debt_to_income, 2),
-        "Score": score,
-        "Decision": decision,
-        "Risk Level": risk
-    }
+    st.markdown("---")
+    st.subheader("Evaluation Result")
+    st.markdown(f"**Score:** `{score}`")
+    st.markdown(f"<span style='color:{color}; font-size:24px'>{verdict}</span>", unsafe_allow_html=True)
 
-
-if __name__ == "__main__":
-    # Sample data to test
-    applicant = {
-        "income": 31000,
-        "debt": 9000,
-        "rent": 17500,
-        "tpn": "Good",
-        "deposit_ready": "Unknown",
-        "rental_history": "No History",
-        "red_flags": "Unknown"
-    }
-
-    result = evaluate_applicant(applicant)
-    for k, v in result.items():
-        print(f"{k}: {v}")
